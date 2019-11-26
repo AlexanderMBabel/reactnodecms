@@ -3,29 +3,35 @@ var router = express.Router();
 const bcrypt = require('bcryptjs')
 const Users = require('../../models/Users')
 
-router.get('/', async (req, res, next) => {
-    const userEmail = await Users.findOne({
-        email: req.query.email
-    }, [-password])
-    res.json(useEmail)
+router.get('/', async (req, res) => {
+    try {
+        const userEmail = await Users.find({
+            email: req.query.email
+        }, ).select('-password')
+        res.json(userEmail)
+    } catch (error) {
+        console.log(error)
+    }
+
 })
 
 
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
     const {
         email,
         password
     } = req.body
-    const hashPassword = null
+    let hashPassword = null
     if (password) {
         hashPassword = bcrypt.hashSync(password, 8)
     }
-    const users = new Users({
-        email = email,
-        password = hashPassword
+    let users = new Users({
+        email: email,
+        password: hashPassword
     })
     users.save()
 })
+
 
 module.exports = router

@@ -7,14 +7,16 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/api/users');
+const authRouter = require('./routes/api/auth')
 
 var app = express();
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  useCreateIndex: true
 })
 console.log('db Connected')
 
@@ -31,7 +33,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
