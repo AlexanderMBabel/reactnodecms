@@ -17,10 +17,11 @@ router.get('/', async (req, res) => {
 
 
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const {
         email,
-        password
+        password,
+        name
     } = req.body
     let hashPassword = null
     if (password) {
@@ -28,9 +29,21 @@ router.post('/', (req, res) => {
     }
     let users = new Users({
         email: email,
+        name: name,
         password: hashPassword
     })
-    users.save()
+    try {
+        await users.save()
+        res.json('Registered successfully')
+    } catch (error) {
+        console.log(error)
+        if (error.code === 11000) {
+            res.json('Please enter a different email adress, Email already exists')
+        }
+
+
+    }
+
 })
 
 

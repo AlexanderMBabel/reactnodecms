@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 const styles = {
   container: {
@@ -24,7 +25,7 @@ const Login = () => {
       validateMessages.push('email cannot be blank');
       isValid = false;
     }
-    if (email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
+    if (!email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
       validateMessages.push('email is not valid');
       isValid = false;
     }
@@ -40,31 +41,51 @@ const Login = () => {
       validateMessages.push('Password confirmation required');
       isValid = false;
     }
-    if (passowrd !== password2) {
+    if (password !== password2) {
       validateMessages.push('Passwords do not match');
       isValid = false;
     }
+    setValidateAlert(validateMessages);
     return isValid;
   };
   const submitHandler = e => {
     e.preventDefault();
     if (validate()) {
-      dataObj = {
+      const dataObj = {
         email: formData.email,
         name: formData.name,
         password: formData.password
       };
-      axios.post('http://localhost:4000/api/users', dataObj);
+      setFormData({ email: '', name: '', password: '', password2: '' });
+      axios
+        .post('http://localhost:4000/api/users', dataObj)
+        .then(res => res.data)
+        .then(res => setValidateAlert([...validateAlert, res]))
+        .catch(error => console.log(error));
+    } else {
     }
   };
   const formChangeHandler = e => {
     let newFormData = { ...formData };
+    setValidateAlert([]);
     newFormData[e.target.name] = e.target.value;
     setFormData(newFormData);
+  };
+  const alertColor = alert => {
+    if (alert === 'Registered successfully') {
+      return 'success';
+    } else {
+      return 'danger';
+    }
   };
 
   return (
     <div>
+      {validateAlert.map((alert, id) => (
+        <Alert key={id} variant={alertColor(alert)}>
+          {alert}
+        </Alert>
+      ))}
       <Form className='m-5'>
         <Form.Group controlId='registerEmail'>
           <Form.Label>Enter Email</Form.Label>

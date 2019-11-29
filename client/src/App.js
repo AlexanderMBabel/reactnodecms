@@ -16,7 +16,7 @@ function App() {
           <LinkContainer to='/'>
             <Navbar.Brand>BlogSite</Navbar.Brand>
           </LinkContainer>
-          <Nav className='mr-auto'>
+          <Nav className='mr-auto d-inline-flex'>
             <LinkContainer to='/login'>
               <Nav.Link>Login</Nav.Link>
             </LinkContainer>

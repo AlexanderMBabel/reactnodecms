@@ -4,7 +4,7 @@ const Users = require('../../models/Users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
-router.get('/', async (req, res) => {
+router.get('/register', async (req, res) => {
     const {
         email,
         password
@@ -54,5 +54,46 @@ router.get('/', async (req, res) => {
 
 
 });
+router.get('/login', async (res, res, next) => {
+    const {
+        password,
+        email
+    } = res.body
+    let userInfo = null
+    try {
+        userInfo = await Users.find({
+            email: email
+        }).select('email password')
+    } catch (error) {
+        res.status(401).json({
+            'errors': [{
+                'msg': 'email does not exist'
+            }]
+        })
+    } finally {
+        const passwordMatch = bcrypt.compareSync(password, userInfo[0].password)
+        const payload = {
+            email: userInfo[0].email,
+            admin: false,
+
+        }
+        if (passwordMatch) {
+            jwt.sign(payload, process.env.SECRET, {
+                algorithm: 'HS256',
+                expiresIn: 40000
+            }, (err, token) => {
+                if (err) {
+                    res.status(401).json({
+                        'errors': [{
+                            'msg': 'could not sign token'
+                        }]
+                    })
+                } else {
+                    res.json(token)
+                }
+            })
+        }
+    }
+})
 
 module.exports = router
