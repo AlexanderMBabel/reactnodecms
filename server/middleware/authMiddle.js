@@ -15,13 +15,11 @@ const auth = async (req, res, next) => {
     }
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {
-            res.status(401).json({
-                'errors': [{
-                    msg: 'token not valid(change me)'
-                }]
-            })
+            res.status(401).json('Token not valid')
         }
         return next()
     })
 
 }
+
+module.exports = auth

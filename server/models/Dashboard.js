@@ -38,3 +38,5 @@ const dashboardSchema = new mongoose.Schema({
 
     }]
 })
+
+module.exports = mongoose.model('Dashboard', dashboardSchema)

@@ -1,10 +1,13 @@
 import React from 'react';
 
+import SideNav from './SideNav';
+import Posts from './Posts';
+
 const Dashboard = () => {
   return (
-    <div>
-      <header>Dashboard</header>
-      <div className='sideBar'></div>
+    <div className='float-left'>
+      <SideNav />
+
       <main></main>
     </div>
   );

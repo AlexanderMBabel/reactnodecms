@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcryptjs')
 const Users = require('../../models/Users')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 router.get('/', async (req, res) => {
     try {
@@ -34,7 +36,25 @@ router.post('/', async (req, res) => {
     })
     try {
         await users.save()
-        res.json('Registered successfully')
+        const payload = {
+            email: email,
+            admin: false
+        }
+        jwt.sign(payload, process.env.SECRET, {
+            algorithm: 'HS256',
+            expiresIn: 40000
+        }, (err, token) => {
+            if (err) {
+                res.status(401).json({
+                    'errors': [{
+                        'msg': 'could not sign token'
+                    }]
+                })
+            } else {
+                res.json(token)
+            }
+        })
+
     } catch (error) {
         console.log(error)
         if (error.code === 11000) {

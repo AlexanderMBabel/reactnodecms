@@ -4,11 +4,18 @@ const Users = require('../../models/Users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
-router.get('/register', async (req, res) => {
+const {
+    check,
+    validationResult
+} = require('express-validator')
+router.post('/register', [check('email').isEmail().isEmpty().not(), check('password').isLength({
+    min: 6
+}).isEmpty().not()], async (req, res) => {
     const {
         email,
         password
     } = req.body;
+
     let storedPassword = null
     try {
 
@@ -24,6 +31,7 @@ router.get('/register', async (req, res) => {
     } catch (error) {
         console.log(error);
     } finally {
+        console.log(storedPassword[0])
         const payload = {
             "email": storedPassword[0].email,
             "Admin": false,
@@ -54,23 +62,21 @@ router.get('/register', async (req, res) => {
 
 
 });
-router.get('/login', async (res, res, next) => {
+router.post('/login', async (req, res, next) => {
+
     const {
         password,
         email
-    } = res.body
+    } = req.body
+    console.log(password)
     let userInfo = null
+
     try {
         userInfo = await Users.find({
             email: email
         }).select('email password')
-    } catch (error) {
-        res.status(401).json({
-            'errors': [{
-                'msg': 'email does not exist'
-            }]
-        })
-    } finally {
+        console.log(userInfo)
+
         const passwordMatch = bcrypt.compareSync(password, userInfo[0].password)
         const payload = {
             email: userInfo[0].email,
@@ -83,16 +89,17 @@ router.get('/login', async (res, res, next) => {
                 expiresIn: 40000
             }, (err, token) => {
                 if (err) {
-                    res.status(401).json({
-                        'errors': [{
-                            'msg': 'could not sign token'
-                        }]
-                    })
+                    res.status(401).json(err)
                 } else {
+                    console.log(token)
                     res.json(token)
                 }
             })
         }
+    } catch (error) {
+        res.status(401).json('email doesnt exist')
+    } finally {
+
     }
 })
 

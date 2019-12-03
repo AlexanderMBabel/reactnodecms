@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import axios from 'axios';
-const styles = {
-  container: {
-    margin: 20,
-    borderRadius: 5
-  }
-};
 
-const Login = () => {
+import axios from 'axios';
+import history from '../history';
+
+const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -60,7 +55,12 @@ const Login = () => {
       axios
         .post('http://localhost:4000/api/users', dataObj)
         .then(res => res.data)
-        .then(res => setValidateAlert([...validateAlert, res]))
+        .then(res => {
+          setValidateAlert([...validateAlert, res]);
+          window.localStorage.setItem('token', res);
+          setIsLoggedIn(true);
+          history.push('/dashboard');
+        })
         .catch(error => console.log(error));
     } else {
     }
