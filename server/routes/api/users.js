@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
         password,
         name
     } = req.body
+    console.log(req.body)
     let hashPassword = null
     if (password) {
         hashPassword = bcrypt.hashSync(password, 8)
@@ -56,10 +57,22 @@ router.post('/', async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
+        console.log(error.message)
         if (error.code === 11000) {
-            res.json('Please enter a different email adress, Email already exists')
+            res.json({
+                'errors': [{
+                    'msg': 'Please enter a different email adress, Email already exists'
+                }]
+            })
         }
+        if (error.name === 'validationError') {
+            res.json({
+                'errors': [{
+                    'msg': error.message
+                }]
+            })
+        }
+
 
 
     }

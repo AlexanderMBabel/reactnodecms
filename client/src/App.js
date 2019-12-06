@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Router, Switch, Route, Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import history from './history';
 
 import './App.css';
+import ShowAlert from './components/ShowAlert';
 import Register from './components/Register';
 import Login from './components/Login';
 import Start from './components/Start';
@@ -13,9 +14,18 @@ import Posts from './components/dashboard/Posts';
 
 import { Provider } from 'react-redux';
 import store from './store';
+import PrivateRoute from './components/utils/PrivateRoute';
+import setAuthToken from './utils/setauthtoken';
+import { loadUser } from './actions/auth';
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
   const logOutHandler = () => {
     window.localStorage.clear();
     setIsLoggedIn(false);
@@ -47,6 +57,7 @@ function App() {
             </Nav>
           </Navbar>
         </div>
+        <ShowAlert />
         <Switch>
           <Route path='/dashboard/posts'>
             <div className='grid-container'>
@@ -58,9 +69,7 @@ function App() {
               </div>
             </div>
           </Route>
-          <Route path='/dashboard'>
-            <Dashboard />
-          </Route>
+          <PrivateRoute exact path='/dashboard' component={Dashboard} />
 
           <Route path='/register'>
             <Register setIsLoggedIn={setIsLoggedIn} />

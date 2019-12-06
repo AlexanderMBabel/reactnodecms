@@ -4,10 +4,30 @@ const Users = require('../../models/Users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
+const auth = require('../../middleware/authMiddle')
 const {
     check,
     validationResult
 } = require('express-validator')
+
+// @route  GET api/auth
+// @desc   Check token
+// @access Public
+
+router.get('/', auth, async (req, res) => {
+    try {
+        const user = await Users.find({
+            email: req.email
+        }).select('-password')
+        res.json(user)
+    } catch (err) {
+        console.error(err.message)
+        res.status(500).send('Server Error')
+    }
+
+})
+
+
 router.post('/register', [check('email').isEmail().isEmpty().not(), check('password').isLength({
     min: 6
 }).isEmpty().not()], async (req, res) => {

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { setAlert } from '../actions/alert';
+import { register } from '../actions/auth';
+import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import history from '../history';
 
-const Login = ({ setIsLoggedIn }) => {
+const Register = ({ setIsLoggedIn, setAlert, register }) => {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -15,59 +19,62 @@ const Login = ({ setIsLoggedIn }) => {
   const validate = () => {
     let isValid = true;
     const { email, name, password, password2 } = formData;
-    let validateMessages = [];
+
     if (email === '') {
-      validateMessages.push('email cannot be blank');
+      setAlert('email cannot be blank', 'danger');
       isValid = false;
     }
     if (!email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
-      validateMessages.push('email is not valid');
+      setAlert('email is not valid', 'danger', 'register');
       isValid = false;
     }
     if (name === '') {
-      validateMessages.push('Name is required');
+      setAlert('Name is required', 'danger', 'register');
       isValid = false;
     }
     if (password === '') {
-      validateMessages.push('password is required');
+      setAlert('password is required', 'danger', 'register');
       isValid = false;
     }
     if (password2 === '') {
-      validateMessages.push('Password confirmation required');
+      setAlert('Password confirmation required', 'danger', 'register');
       isValid = false;
     }
     if (password !== password2) {
-      validateMessages.push('Passwords do not match');
+      setAlert('Passwords do not match', 'danger', 'register');
       isValid = false;
     }
-    setValidateAlert(validateMessages);
+
     return isValid;
   };
   const submitHandler = e => {
     e.preventDefault();
     if (validate()) {
+      // const { name, email, password } = formData;
       const dataObj = {
         email: formData.email,
         name: formData.name,
         password: formData.password
       };
+
       setFormData({ email: '', name: '', password: '', password2: '' });
-      axios
-        .post('http://localhost:4000/api/users', dataObj)
-        .then(res => res.data)
-        .then(res => {
-          setValidateAlert([...validateAlert, res]);
-          window.localStorage.setItem('token', res);
-          setIsLoggedIn(true);
-          history.push('/dashboard');
-        })
-        .catch(error => console.log(error));
+      register(dataObj);
+      // axios
+      //   .post('http://localhost:4000/api/users', dataObj)
+      //   .then(res => res.data)
+      //   .then(res => {
+      //     setValidateAlert([...validateAlert, res]);
+      //     window.localStorage.setItem('token', res);
+      //     setIsLoggedIn(true);
+      //     history.push('/dashboard');
+      //   })
+      //   .catch(error => console.log(error));
     } else {
     }
   };
   const formChangeHandler = e => {
     let newFormData = { ...formData };
-    setValidateAlert([]);
+
     newFormData[e.target.name] = e.target.value;
     setFormData(newFormData);
   };
@@ -144,5 +151,9 @@ const Login = ({ setIsLoggedIn }) => {
     </div>
   );
 };
+Register.propType = {
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired
+};
 
-export default Login;
+export default connect(null, { setAlert, register })(Register);

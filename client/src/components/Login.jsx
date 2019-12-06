@@ -3,6 +3,7 @@ import { Form, Alert, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import history from '../history';
+import { login } from '../actions/auth';
 
 const Login = ({ setIsLoggedIn }) => {
   const [loginData, setLoginData] = useState({ email: ' ', password: '' });

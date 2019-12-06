@@ -9,16 +9,29 @@ const auth = async (req, res, next) => {
     if (!token) {
         res.status(401).json({
             'errors': [{
-                msg: 'no token provided(change me)'
+                'msg': 'no token provided(change me)'
             }]
         })
     }
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
-        if (err) {
-            res.status(401).json('Token not valid')
-        }
-        return next()
-    })
+    try {
+        await jwt.verify(token, process.env.SECRET, (err, decoded) => {
+            if (err) {
+                res.status(401).json({
+                    'errors': [{
+                        'msg': 'token cant decode'
+                    }]
+                })
+            } else {
+                req.email = decoded.email
+                next()
+            }
+
+        })
+    } catch (err) {
+        res.status(500).json({
+            'msg': 'Server Error'
+        })
+    }
 
 }
 
