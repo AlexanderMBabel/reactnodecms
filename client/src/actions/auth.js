@@ -4,7 +4,8 @@ import {
     USER_LOADED,
     AUTH_ERROR,
     LOGIN_SUCCESS,
-    LOGIN_FAILED
+    LOGIN_FAILED,
+    LOGOUT
 } from '../actions/types'
 import axios from 'axios'
 import {
@@ -19,7 +20,7 @@ export const loadUser = () => async dispatch => {
 
     try {
         const res = await axios.get('http://localhost:4000/api/auth/')
-
+        console.log(res.data)
         dispatch({
             type: USER_LOADED,
             payload: res.data
@@ -38,7 +39,7 @@ export const login = (body) => async dispatch => {
         }
     }
     try {
-        const res = await axios.post('http://localhost:4000/api/auth/login')
+        const res = await axios.post('http://localhost:4000/api/auth/login', body, config)
         dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data
@@ -82,4 +83,10 @@ export const register = (
         })
     }
 
+}
+
+export const logout = () => dispatch => {
+    dispatch({
+        type: LOGOUT
+    })
 }

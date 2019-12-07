@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Form, Alert, Button } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import history from '../history';
 import { login } from '../actions/auth';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { setAlert } from '../actions/alert';
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ login, isAuthenticated, setAlert }) => {
   const [loginData, setLoginData] = useState({ email: ' ', password: '' });
   const [alertData, setAlertData] = useState([]);
   const changeHandler = e => {
@@ -13,18 +16,28 @@ const Login = ({ setIsLoggedIn }) => {
     newData[e.target.name] = e.target.value;
     setLoginData(newData);
   };
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    axios
-      .post('http://localhost:4000/api/auth/login', loginData)
-      .then(result => {
-        console.log(result);
-        window.localStorage.setItem('token', result.data);
-        setIsLoggedIn(true);
-        history.push('/dashboard');
-      })
-      .catch(error => setAlertData([...alertData, error.message]));
+    try {
+      await login(loginData);
+    } catch (err) {
+      console.error(err);
+      setAlert(err);
+    }
+
+    // axios
+    //   .post('http://localhost:4000/api/auth/login', loginData)
+    //   .then(result => {
+    //     console.log(result);
+    //     window.localStorage.setItem('token', result.data);
+    //     setIsLoggedIn(true);
+    //     history.push('/dashboard');
+    //   })
+    //   .catch(error => setAlertData([...alertData, error.message]));
   };
+  if (isAuthenticated) {
+    history.push('/dashboard');
+  }
   return (
     <div>
       {alertData.map(alert => (
@@ -60,5 +73,14 @@ const Login = ({ setIsLoggedIn }) => {
     </div>
   );
 };
+login.protoTypes = {
+  login: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
 
-export default withRouter(Login);
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { login, setAlert })(withRouter(Login));

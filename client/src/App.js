@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Router, Switch, Route, Link } from 'react-router-dom';
-import { Navbar, Nav } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+
 import history from './history';
 
 import './App.css';
+import NavigationBar from './components/NavigationBar';
 import ShowAlert from './components/ShowAlert';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -14,49 +14,26 @@ import Posts from './components/dashboard/Posts';
 
 import { Provider } from 'react-redux';
 import store from './store';
+import { connect } from 'react-redux';
 import PrivateRoute from './components/utils/PrivateRoute';
 import setAuthToken from './utils/setauthtoken';
-import { loadUser } from './actions/auth';
+import { loadUser, logout } from './actions/auth';
+import PropTypes from 'prop-types';
+import auth from './reducers/auth';
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 
-function App() {
+function App({ isAuthenticated }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     store.dispatch(loadUser());
   }, []);
-  const logOutHandler = () => {
-    window.localStorage.clear();
-    setIsLoggedIn(false);
-  };
+
   return (
     <Provider store={store}>
       <Router history={history}>
-        <div>
-          <Navbar bg='light' expand='lg'>
-            <LinkContainer to='/'>
-              <Navbar.Brand>BlogSite</Navbar.Brand>
-            </LinkContainer>
-
-            <Nav className='mr-auto d-inline-flex '>
-              {!isLoggedIn ? (
-                <div className='d-inline-flex'>
-                  <LinkContainer to='/login'>
-                    <Nav.Link>Login</Nav.Link>
-                  </LinkContainer>
-                  <LinkContainer to='/register'>
-                    <Nav.Link>Register</Nav.Link>
-                  </LinkContainer>
-                </div>
-              ) : (
-                <LinkContainer to='/'>
-                  <Nav.Link onClick={logOutHandler}>LogOut</Nav.Link>
-                </LinkContainer>
-              )}
-            </Nav>
-          </Navbar>
-        </div>
+        <NavigationBar />
         <ShowAlert />
         <Switch>
           <Route path='/dashboard/posts'>
@@ -74,9 +51,8 @@ function App() {
           <Route path='/register'>
             <Register setIsLoggedIn={setIsLoggedIn} />
           </Route>
-          <Route path='/login'>
-            <Login setIsLoggedIn={setIsLoggedIn}></Login>
-          </Route>
+          <Route exact path='/login' component={Login} />
+
           <Route path='/'>
             <Start></Start>
           </Route>

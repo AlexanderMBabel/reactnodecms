@@ -52,7 +52,9 @@ router.post('/', async (req, res) => {
                     }]
                 })
             } else {
-                res.json(token)
+                res.json({
+                    token
+                })
             }
         })
 

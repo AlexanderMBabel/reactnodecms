@@ -71,7 +71,9 @@ router.post('/register', [check('email').isEmail().isEmpty().not(), check('passw
                     if (error) {
                         console.log(error);
                     } else {
-                        res.json(token);
+                        res.json({
+                            token
+                        });
                     }
                 }
             );
@@ -112,7 +114,9 @@ router.post('/login', async (req, res, next) => {
                     res.status(401).json(err)
                 } else {
                     console.log(token)
-                    res.json(token)
+                    res.json({
+                        token
+                    })
                 }
             })
         }

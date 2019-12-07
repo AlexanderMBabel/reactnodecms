@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setAlert } from '../actions/alert';
 import { register } from '../actions/auth';
@@ -7,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import history from '../history';
+import auth from '../reducers/auth';
 
 const Register = ({ setIsLoggedIn, setAlert, register }) => {
   const [formData, setFormData] = useState({
@@ -59,6 +61,7 @@ const Register = ({ setIsLoggedIn, setAlert, register }) => {
 
       setFormData({ email: '', name: '', password: '', password2: '' });
       register(dataObj);
+      history.push('/dashboard');
       // axios
       //   .post('http://localhost:4000/api/users', dataObj)
       //   .then(res => res.data)
@@ -153,7 +156,13 @@ const Register = ({ setIsLoggedIn, setAlert, register }) => {
 };
 Register.propType = {
   setAlert: PropTypes.func.isRequired,
-  register: PropTypes.func.isRequired
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
 };
 
-export default connect(null, { setAlert, register })(Register);
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+export default connect(mapStateToProps, { setAlert, register })(
+  withRouter(Register)
+);
