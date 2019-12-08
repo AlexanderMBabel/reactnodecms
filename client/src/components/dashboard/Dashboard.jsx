@@ -1,13 +1,11 @@
 import React from 'react';
 
 import SideNav from './SideNav';
-import Posts from './Posts';
+import Posts from '../posts/Posts';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const Dashboard = ({ auth: { user } }) => {
-  let newuser = user;
-  console.table(newuser);
   return (
     <div className='container d-flex'>
       <SideNav className='float-left' />

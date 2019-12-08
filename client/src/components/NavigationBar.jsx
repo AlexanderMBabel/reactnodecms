@@ -29,9 +29,14 @@ const NavigationBar = ({ isAuthenticated, logout }) => {
               </LinkContainer>
             </div>
           ) : (
-            <LinkContainer to='/'>
-              <Nav.Link onClick={logOutHandler}>LogOut</Nav.Link>
-            </LinkContainer>
+            <div className='float-right'>
+              <LinkContainer to='/'>
+                <Nav.Link onClick={logOutHandler}>LogOut</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/dashboard'>
+                <Nav.Link>Dashboard</Nav.Link>
+              </LinkContainer>
+            </div>
           )}
         </Nav>
       </Navbar>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Router, Switch, Route, Link } from 'react-router-dom';
+import { Router, Switch, Route } from 'react-router-dom';
 
 import history from './history';
 
@@ -10,22 +10,20 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Start from './components/Start';
 import Dashboard from './components/dashboard/Dashboard';
-import Posts from './components/dashboard/Posts';
+import Posts from './components/posts/Posts';
 
 import { Provider } from 'react-redux';
 import store from './store';
-import { connect } from 'react-redux';
+
 import PrivateRoute from './components/utils/PrivateRoute';
 import setAuthToken from './utils/setauthtoken';
-import { loadUser, logout } from './actions/auth';
-import PropTypes from 'prop-types';
-import auth from './reducers/auth';
+import { loadUser } from './actions/auth';
+
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 
 function App({ isAuthenticated }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     store.dispatch(loadUser());
   }, []);
@@ -36,7 +34,7 @@ function App({ isAuthenticated }) {
         <NavigationBar />
         <ShowAlert />
         <Switch>
-          <Route path='/dashboard/posts'>
+          {/* <Route path='/dashboard/posts'>
             <div className='grid-container'>
               <div>
                 <Dashboard />
@@ -45,11 +43,12 @@ function App({ isAuthenticated }) {
                 <Posts />
               </div>
             </div>
-          </Route>
+          </Route> */}
+          <PrivateRoute exact path='/dashboard/posts' component={Posts} />
           <PrivateRoute exact path='/dashboard' component={Dashboard} />
 
           <Route path='/register'>
-            <Register setIsLoggedIn={setIsLoggedIn} />
+            <Register />
           </Route>
           <Route exact path='/login' component={Login} />
 
