@@ -3,9 +3,12 @@ import {
     LOAD_POSTS_FAILED
 } from '../actions/types'
 
+
+
 const initialState = {
     posts: null,
-    loading: true
+    loading: true,
+    alert: ''
 }
 
 export default function (state = initialState, action) {
@@ -19,10 +22,17 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 loading: false,
-                    posts: payload
+                    posts: payload,
+                    alert: 'post success'
 
             }
-            default:
-                return state
+            case LOAD_POSTS_FAILED:
+                return {
+                    ...state,
+                    posts: null,
+                        alert: 'post failed'
+                }
+                default:
+                    return state
     }
 }

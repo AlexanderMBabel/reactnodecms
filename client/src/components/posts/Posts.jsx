@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
+
 import { connect } from 'react-redux';
+import { LinkContainer } from 'react-router-bootstrap';
 import { loadPosts } from '../../actions/posts';
 import PropTypes from 'prop-types';
 import Post from './Post';
+import NewPost from './NewPost';
 
 const Posts = ({ loadPosts, posts: { posts }, auth: { user } }) => {
   useEffect(() => {
@@ -15,19 +17,28 @@ const Posts = ({ loadPosts, posts: { posts }, auth: { user } }) => {
     }
   }, [user]);
 
+  const addPostHandler = () => {
+    console.log('handled');
+    return <NewPost />;
+  };
+
   return (
     <div>
       <div className='container'>
-        <div className='row'>
+        <div className='d-flex'>
           {posts !== null &&
             posts.map(post => (
               <Post
+                key={post._id}
                 title={post.title}
                 textBlocks={post.textBlocks}
                 images={post.images}
               />
             ))}
         </div>
+        <LinkContainer to='/dashboard/posts/new'>
+          <Button>+ Add Post</Button>
+        </LinkContainer>
       </div>
     </div>
   );

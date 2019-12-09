@@ -4,6 +4,8 @@ import { Router, Switch, Route } from 'react-router-dom';
 import history from './history';
 
 import './App.css';
+
+//components
 import NavigationBar from './components/NavigationBar';
 import ShowAlert from './components/ShowAlert';
 import Register from './components/Register';
@@ -11,12 +13,17 @@ import Login from './components/Login';
 import Start from './components/Start';
 import Dashboard from './components/dashboard/Dashboard';
 import Posts from './components/posts/Posts';
+import NewPost from './components/posts/NewPost';
 
+//redux stuff
 import { Provider } from 'react-redux';
 import store from './store';
 
+//private routing
 import PrivateRoute from './components/utils/PrivateRoute';
 import setAuthToken from './utils/setauthtoken';
+
+//actions
 import { loadUser } from './actions/auth';
 
 if (localStorage.token) {
@@ -26,7 +33,7 @@ if (localStorage.token) {
 function App({ isAuthenticated }) {
   useEffect(() => {
     store.dispatch(loadUser());
-  }, []);
+  }, [PrivateRoute]);
 
   return (
     <Provider store={store}>
@@ -44,6 +51,7 @@ function App({ isAuthenticated }) {
               </div>
             </div>
           </Route> */}
+          <PrivateRoute exact path='/dashboard/posts/new' component={NewPost} />
           <PrivateRoute exact path='/dashboard/posts' component={Posts} />
           <PrivateRoute exact path='/dashboard' component={Dashboard} />
 

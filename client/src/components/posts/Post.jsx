@@ -11,7 +11,7 @@ const Post = ({ title, textBlocks, images }) => {
         <Card.Body>
           <Card.Title>{title}</Card.Title>
           {textBlocks.map(textBlock => (
-            <Card.Text>{textBlock.textBlock}</Card.Text>
+            <Card.Text key={textBlock._id}>{textBlock.textBlock}</Card.Text>
           ))}
           <LinkContainer to='/post/view'>
             <Button variant='primary'>view full post</Button>

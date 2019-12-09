@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Posts = require('../../models/Posts')
+const upload = require('../../middleware/upload')
+
+
 
 router.get('/', async (req, res, next) => {
 
@@ -14,18 +17,26 @@ router.get('/', async (req, res, next) => {
     }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', upload.single('image'), async (req, res, next) => {
     const {
-        email,
+        userEmail,
         title,
         textBlocks,
-        images
+        image
     } = req.body
 
+    console.log()
+
+    const imageArr = [{
+        image: req.file,
+        position: '2'
+    }]
+
     let post = new Posts({
-        userEmail: email,
+        userEmail: userEmail,
         title: title,
-        textBlocks: textBlocks
+        textBlocks: textBlocks,
+        images: imageArr
 
     })
 
